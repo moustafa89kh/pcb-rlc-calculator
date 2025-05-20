@@ -1,32 +1,38 @@
-# pcb-rlc-calculator
-🔍 Purpose of the Script To calculate lumped R, L, C, and Z values of a PCB trace based on:  Trace geometry (width, height, thickness)  Material properties (copper resistivity, temperature coefficient, permittivity)  Trace type: microstrip or stripline
 # PCB RLC Calculator (Microstrip / Stripline)
 
 This MATLAB script calculates the lumped R, L, and C parameters as well as characteristic impedance (Z) for PCB traces modeled as microstrip or stripline.
 
 ## Features
 
-- Supports both microstrip and stripline models
-- Calculates R (mΩ), L (nH), C (pF), and Z (Ω)
-- Input parameters: geometry, material, and temperature
-- Includes geometric validity checks
+- Supports microstrip and stripline
+- Calculates resistance (R), inductance (L), capacitance (C), and characteristic impedance (Z)
+- Includes validity checks for geometry
 
 ## Limitations
 
 - Valid under 1 GHz
-- Skin effect, copper roughness, and loss tangent are **not** included
-- Empirical formulas are valid within these limits:
-  - Microstrip: `W/H < 7.475 - 1.25*(T/H)`
-  - Stripline: `W/B < 2.375 - 1.25*(T/B)`
+- Ignores:
+  - Skin effect
+  - Copper roughness
+  - Loss tangent
 
-## Usage
+### Geometry Validity Conditions:
+- **Microstrip:** `W/H < 7.475 - 1.25*(T/H)`
+- **Stripline:** `W/B < 2.375 - 1.25*(T/B)`
 
-Edit `pcb_rlc_calculator.m` to input your trace geometry and material parameters. Run the script in MATLAB or Octave.
+## Getting Started
 
-## Author
+### Requirements
+- MATLAB or GNU Octave
 
-Adapted from script by Aleksandr Sidun [AnalogHub.ie](https://analoghub.ie)
+### Usage
+1. Open the file `pcb_rlc_calculator.m`
+2. Modify input parameters to match your trace geometry
+3. Run the script to see output in the console
 
-## License
-
-MIT
+### Example Output
+PCB microstrip parameters (Length = 1.0 mm):
+R = 0.987 mOhms
+L = 0.593 nH
+C = 0.215 pF
+Z = 51.679 Ohms
