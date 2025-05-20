@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PCB RLC Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>RLC-calculator for PCB Trace</h1>
+        <p>By <a href="mailto:contact@analoghub.ie">Aleksandr Sidun</a></p>
+    </header>
+
+    <section>
+        <h2>Overview</h2>
+        <p>This article contains a MATLAB script for calculating the parasitic parameters of a PCB trace.</p>
+
+        <h2>Script Limitations</h2>
+        <ul>
+            <li>Valid under 1 GHz</li>
+            <li>Skin effect is omitted</li>
+            <li>Copper roughness is omitted</li>
+            <li>Loss tangent is omitted</li>
+        </ul>
+
+        <h2>Geometry Limitations</h2>
+        <ul>
+            <li>W/H < 7.475 - 1.25 * (T/H) for a microstrip</li>
+            <li>W/B < 2.375 - 1.25 * (T/B) for a stripline</li>
+        </ul>
+
+        <h2>Formulas</h2>
+        <h3>Microstrip Equations:</h3>
+        <pre>
+        R = 1000 * ρ₀ * (1 + α * (temp - 25)) / (T * W)
+        C = 26.378 * (ϵr + 1.41) * ln(5.98 * H / (0.8 * W + T))
+        L = 199.65 * ln(5.98 * H / (0.8 * W + T))
+        Z = 87 * ln(5.98 * H / (0.8 * W + T)) / sqrt(ϵr + 1.41)
+        </pre>
+
+        <h3>Stripline Equations:</h3>
+        <pre>
+        R = 1000 * ρ₀ * (1 + α * (temp - 25)) / (T * W)
+        C = 39.37 * ϵr * sqrt(2) / (ln(1.9 * B / (0.8 * W + T)))
+        L = 199.8425 * ln(1.9 * B / (0.8 * W + T))
+        Z = 60 * ln(1.9 * B / (0.8 * W + T)) / sqrt(ϵr)
+        </pre>
+
+        <h2>PCB Lumped Parameters Calculator</h2>
+        <p>Use the MATLAB script to calculate R, L, C, and Z for your PCB traces (microstrip or stripline).</p>
+        <p>For more details, see the original article on <a href="https://resources.system-analysis.cadence.com/blog/msa2021-is-there-a-pcb-trace-inductance-rule-of-thumb">Cadence Blog</a></p>
+    </section>
+
+    <footer>
+        <p>© 2024-2025 All Rights Reserved</p>
+    </footer>
+</body>
+</html>
