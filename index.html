@@ -1,60 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>PCB RLC Calculator</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RLC Calculator for PCB Trace</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: auto;
+      padding: 2em;
+      background-color: #f4f4f4;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    code, pre {
+      background-color: #eee;
+      padding: 0.3em;
+      display: block;
+      overflow-x: auto;
+    }
+    .equation {
+      background-color: #fff;
+      border-left: 4px solid #4CAF50;
+      padding: 1em;
+      margin: 1em 0;
+      font-family: monospace;
+      white-space: pre-wrap;
+    }
+    .note {
+      background: #fffae6;
+      padding: 1em;
+      border-left: 4px solid #f0c000;
+      margin-top: 1em;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>RLC-calculator for PCB Trace</h1>
-        <p>By <a href="mailto:contact@analoghub.ie">Aleksandr Sidun</a></p>
-    </header>
+  <h1>RLC-Calculator for PCB Trace</h1>
+  <p>This tool provides equations and a MATLAB script to calculate the parasitic R, L, and C parameters of a PCB trace.</p>
 
-    <section>
-        <h2>Overview</h2>
-        <p>This article contains a MATLAB script for calculating the parasitic parameters of a PCB trace.</p>
+  <h2>Limitations</h2>
+  <ul>
+    <li>Valid under 1 GHz</li>
+    <li>Skin effect, copper roughness, and loss tangent are omitted</li>
+    <li>Geometry restrictions:
+      <ul>
+        <li><strong>Microstrip:</strong> W/H &lt; 7.475 − 1.25·(T/H)</li>
+        <li><strong>Stripline:</strong> W/B &lt; 2.375 − 1.25·(T/B)</li>
+      </ul>
+    </li>
+  </ul>
 
-        <h2>Script Limitations</h2>
-        <ul>
-            <li>Valid under 1 GHz</li>
-            <li>Skin effect is omitted</li>
-            <li>Copper roughness is omitted</li>
-            <li>Loss tangent is omitted</li>
-        </ul>
+  <p><strong>Parameters:</strong> H - height, W - width, T - thickness, B - distance between planes</p>
 
-        <h2>Geometry Limitations</h2>
-        <ul>
-            <li>W/H < 7.475 - 1.25 * (T/H) for a microstrip</li>
-            <li>W/B < 2.375 - 1.25 * (T/B) for a stripline</li>
-        </ul>
+  <h2>Microstrip Equations</h2>
+  <div class="equation">
+R = 1000·ρ₀·(1 + α·(temp − 25)) / (T·W) [mΩ/m]
 
-        <h2>Formulas</h2>
-        <h3>Microstrip Equations:</h3>
-        <pre>
-        R = 1000 * ρ₀ * (1 + α * (temp - 25)) / (T * W)
-        C = 26.378 * (ϵr + 1.41) * ln(5.98 * H / (0.8 * W + T))
-        L = 199.65 * ln(5.98 * H / (0.8 * W + T))
-        Z = 87 * ln(5.98 * H / (0.8 * W + T)) / sqrt(ϵr + 1.41)
-        </pre>
+C = 26.378·(εᵣ + 1.41) / ln(5.98·H / (0.8·W + T)) [pF/m]
 
-        <h3>Stripline Equations:</h3>
-        <pre>
-        R = 1000 * ρ₀ * (1 + α * (temp - 25)) / (T * W)
-        C = 39.37 * ϵr * sqrt(2) / (ln(1.9 * B / (0.8 * W + T)))
-        L = 199.8425 * ln(1.9 * B / (0.8 * W + T))
-        Z = 60 * ln(1.9 * B / (0.8 * W + T)) / sqrt(ϵr)
-        </pre>
+L = 199.65·ln(5.98·H / (0.8·W + T)) [nH/m]
 
-        <h2>PCB Lumped Parameters Calculator</h2>
-        <p>Use the MATLAB script to calculate R, L, C, and Z for your PCB traces (microstrip or stripline).</p>
-        <p>For more details, see the original article on <a href="https://resources.system-analysis.cadence.com/blog/msa2021-is-there-a-pcb-trace-inductance-rule-of-thumb">Cadence Blog</a></p>
-    </section>
+Z = 87·ln(5.98·H / (0.8·W + T)) / √(εᵣ + 1.41)
+  </div>
 
-    <footer>
-        <p>© 2024-2025 All Rights Reserved</p>
-    </footer>
+  <h2>Stripline Equations</h2>
+  <div class="equation">
+R = 1000·ρ₀·(1 + α·(temp − 25)) / (T·W) [mΩ/m]
+
+C = 39.37·εᵣ·√2 / ln(1.9·B / (0.8·W + T)) [pF/m]
+
+L = 199.8425·ln(1.9·B / (0.8·W + T)) [nH/m]
+
+Z = 60·ln(1.9·B / (0.8·W + T)) / √εᵣ
+  </div>
+
+  <h2>MATLAB Script</h2>
+  <pre><code>%% PCB lumped parameters calculator (microstrip/stripline)
+% Limitations:
+% - Valid under 1GHz
+% - Skin effect is omitted
+% - Copper roughness is omitted
+% - Loss tangent is omitted
+
+%% Input parameters
+type = "microstrip";         % can be "microstrip" or "stripline"
+temp = 25;                   % temperature [°C]
+length = 1e-3;               % trace length [m]
+width = 0.5e-3;              % trace width [m]
+thickness = 35e-6;           % trace thickness [m]
+height = 0.4e-3;             % height over a plane [m]
+
+%% Constants
+ro = 1.724e-8;               % resistivity of copper [Ohm·m]
+alpha = 3.9e-3;              % temp coefficient of copper
+eps_r = 4.46;                % relative permittivity
+
+%% Calculations
+B = 2*height + thickness;
+switch type
+    case "microstrip"
+        if width/height &lt; 7.475 - 1.25*(thickness/height)
+            ...
+        end
+    case "stripline"
+        if width/B &lt; 2.375 - 1.25*(thickness/B)
+            ...
+        end
+end
+  </code></pre>
+
+  <div class="note">
+    Disclaimer: This calculator is provided for educational and reference purposes. It is not affiliated with Analog Devices or any other company.
+  </div>
 </body>
 </html>
